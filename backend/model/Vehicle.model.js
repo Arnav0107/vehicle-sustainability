@@ -1,23 +1,35 @@
 import mongoose from "mongoose";
 
-const vehicleSchema = new mongoose.Schema({
-  make: String,
-  model: String,
-  year: Number,
+const options = {
+  discriminatorKey: "type",
+  collection: "vehicles",
+  timestamps: true
+};
 
-  type: {
-    type: String,
-    enum: ["petrol", "electric", "hybrid"],
-    required: true,
+const VehicleSchema = new mongoose.Schema(
+  {
+    make: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    model: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    year: {
+      type: Number,
+      required: true
+    },
+    manufacturingEmission: {
+      type: Number,
+      default: 9000   // kg CO2 approx manufacturing
+    }
   },
+  options
+);
 
-  mileage: Number,        // km per litre (for petrol)
-  efficiency: Number,     // km per kWh (for electric)
+const Vehicle = mongoose.model("Vehicle", VehicleSchema);
 
-  co2PerKm: Number,       // direct emission per km (optional)
-
-  basePrice: Number,      // vehicle showroom price
-
-}, { timestamps: true });
-
-export default mongoose.model("Vehicle", vehicleSchema);
+export default Vehicle;
